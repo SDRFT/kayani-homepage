@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayani | Your Health Team</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f1419;
+            --bg-light: #1a2634;
+            --card: #1e2d3a;
+            --card-light: #2a3f4f;
+            --border: #3a4f5f;
+
+            /* Agent Colors */
+            --nura: #ff4b8c;
+            --nura-dark: #e6407d;
+            --layla: #a855f7;
+            --layla-dark: #9333ea;
+            --salma: #f97316;
+            --salma-dark: #ea580c;
+            --maya: #06b6d4;
+            --maya-dark: #0891b2;
+            --amira: #ec4899;
+            --amira-dark: #db2777;
+            --hana: #eab308;
+            --hana-dark: #ca8a04;
+
+            --green: #22c55e;
+            --green-dark: #16a34a;
+            --yellow: #ffc800;
+            --red: #ef4444;
+            --text: #ffffff;
+            --text-light: #9ca3af;
+            --text-muted: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .app {
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+        }
+
+        /* Header with current agent */
+        header {
+            padding: 16px 20px;
+            background: var(--bg-light);
+            border-bottom: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .agent-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .agent-avatar.nura { background: linear-gradient(135deg, var(--nura) 0%, var(--nura-dark) 100%); }
+        .agent-avatar.layla { background: linear-gradient(135deg, var(--layla) 0%, var(--layla-dark) 100%); }
+        .agent-avatar.salma { background: linear-gradient(135deg, var(--salma) 0%, var(--salma-dark) 100%); }
+        .agent-avatar.maya { background: linear-gradient(135deg, var(--maya) 0%, var(--maya-dark) 100%); }
+        .agent-avatar.amira { background: linear-gradient(135deg, var(--amira) 0%, var(--amira-dark) 100%); }
+        .agent-avatar.hana { background: linear-gradient(135deg, var(--hana) 0%, var(--hana-dark) 100%); }
+
+        .online-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            background: var(--green);
+            border-radius: 50%;
+            border: 3px solid var(--bg-light);
+        }
+
+        .agent-details h1 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .agent-details span {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stat {
+            padding: 8px 12px;
+            background: var(--card);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat.xp { color: var(--yellow); }
+        .stat.streak { color: var(--salma); }
+
+        /* Team Bar */
+        .team-bar {
+            padding: 12px 20px;
+            background: var(--bg-light);
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .team-bar::-webkit-scrollbar { display: none; }
+
+        .team-member {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            background: var(--card);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            opacity: 0.6;
+        }
+
+        .team-member:hover {
+            opacity: 0.8;
+        }
+
+        .team-member.active {
+            opacity: 1;
+            border-color: var(--nura);
+        }
+
+        .team-member.active.layla { border-color: var(--layla); }
+        .team-member.active.salma { border-color: var(--salma); }
+        .team-member.active.maya { border-color: var(--maya); }
+        .team-member.active.amira { border-color: var(--amira); }
+        .team-member.active.hana { border-color: var(--hana); }
+
+        .team-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .team-avatar.nura { background: var(--nura); }
+        .team-avatar.layla { background: var(--layla); }
+        .team-avatar.salma { background: var(--salma); }
+        .team-avatar.maya { background: var(--maya); }
+        .team-avatar.amira { background: var(--amira); }
+        .team-avatar.hana { background: var(--hana); }
+
+        .team-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* User Profile Summary */
+        .profile-summary {
+            padding: 12px 20px;
+            background: var(--card);
+            margin: 12px 16px;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .profile-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .profile-progress {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .profile-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .profile-tag {
+            padding: 4px 10px;
+            background: var(--card-light);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .profile-tag.symptom { background: rgba(255, 75, 140, 0.2); color: var(--nura); }
+        .profile-tag.age { background: rgba(34, 197, 94, 0.2); color: var(--green); }
+        .profile-tag.goal { background: rgba(255, 200, 0, 0.2); color: var(--yellow); }
+
+        /* Chat */
+        .chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Agent Message */
+        .agent-msg {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .msg-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .msg-avatar.nura { background: var(--nura); }
+        .msg-avatar.layla { background: var(--layla); }
+        .msg-avatar.salma { background: var(--salma); }
+        .msg-avatar.maya { background: var(--maya); }
+        .msg-avatar.amira { background: var(--amira); }
+        .msg-avatar.hana { background: var(--hana); }
+
+        .msg-bubble {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            border-top-left-radius: 6px;
+            padding: 14px 18px;
+            max-width: 320px;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .msg-bubble strong { color: var(--nura); }
+        .msg-bubble.layla strong { color: var(--layla); }
+        .msg-bubble.salma strong { color: var(--salma); }
+        .msg-bubble.maya strong { color: var(--maya); }
+
+        .msg-bubble em {
+            color: var(--yellow);
+            font-style: normal;
+            font-weight: 800;
+        }
+
+        /* User Message */
+        .user-msg {
+            align-self: flex-end;
+            background: var(--green);
+            padding: 14px 18px;
+            border-radius: 20px;
+            border-bottom-right-radius: 6px;
+            max-width: 280px;
+            font-size: 15px;
+            font-weight: 700;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Typing */
+        .typing-container {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .typing-bubble {
+            display: flex;
+            gap: 6px;
+            padding: 16px 24px;
+            background: var(--card);
+            border-radius: 20px;
+            border-top-left-radius: 6px;
+        }
+
+        .typing-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--nura);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* Handoff Card */
+        .handoff-card {
+            background: linear-gradient(135deg, var(--card) 0%, var(--card-light) 100%);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 8px 0;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .handoff-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .handoff-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 16px;
+            animation: popIn 0.5s ease 0.2s both;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .handoff-name {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .handoff-specialty {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+        }
+
+        .handoff-intro {
+            font-size: 15px;
+            color: var(--text);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* Input */
+        .input-area {
+            padding: 16px 20px 32px;
+            background: var(--bg-light);
+            border-top: 3px solid var(--border);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .text-input {
+            flex: 1;
+            padding: 14px 20px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text);
+            outline: none;
+        }
+
+        .text-input::placeholder { color: var(--text-muted); }
+        .text-input:focus { border-color: var(--nura); }
+
+        .send-btn {
+            width: 52px;
+            height: 52px;
+            background: var(--nura);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover { transform: scale(1.05); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .send-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+
+        /* API Key Modal */
+        .api-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .api-modal.hidden { display: none; }
+
+        .api-card {
+            background: var(--bg-light);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .api-card h2 {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .api-card p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 24px;
+        }
+
+        .api-input {
+            width: 100%;
+            padding: 16px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: monospace;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .api-input:focus {
+            outline: none;
+            border-color: var(--nura);
+        }
+
+        .api-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--green);
+            border: none;
+            border-bottom: 4px solid var(--green-dark);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .api-btn:hover { filter: brightness(1.1); }
+
+        .api-skip {
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .api-skip:hover { color: var(--text); }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- API Key Modal -->
+    <div class="api-modal" id="apiModal">
+        <div class="api-card">
+            <h2>Welcome to Kayani</h2>
+            <p>Chat with Dr. Nura and her team of women's health specialists.</p>
+            <button class="api-btn" onclick="startDemo()">Start Chatting</button>
+        </div>
+    </div>
+
+    <div class="app">
+        <!-- Header -->
+        <header>
+            <div class="agent-info">
+                <div class="agent-avatar nura" id="headerAvatar">
+                    <span>N</span>
+                    <div class="online-dot"></div>
+                </div>
+                <div class="agent-details">
+                    <h1 id="headerName">Dr. Nura</h1>
+                    <span id="headerRole">Lead Health Companion</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat streak">🔥 <span id="streak">1</span></div>
+                <div class="stat xp">⚡ <span id="xp">0</span></div>
+            </div>
+        </header>
+
+        <!-- Team Bar -->
+        <div class="team-bar">
+            <div class="team-member active" data-agent="nura" onclick="switchAgent('nura')">
+                <div class="team-avatar nura">N</div>
+                <span class="team-name">Nura</span>
+            </div>
+            <div class="team-member" data-agent="layla" onclick="switchAgent('layla')">
+                <div class="team-avatar layla">L</div>
+                <span class="team-name">Layla</span>
+            </div>
+            <div class="team-member" data-agent="salma" onclick="switchAgent('salma')">
+                <div class="team-avatar salma">S</div>
+                <span class="team-name">Salma</span>
+            </div>
+            <div class="team-member" data-agent="maya" onclick="switchAgent('maya')">
+                <div class="team-avatar maya">M</div>
+                <span class="team-name">Maya</span>
+            </div>
+            <div class="team-member" data-agent="amira" onclick="switchAgent('amira')">
+                <div class="team-avatar amira">A</div>
+                <span class="team-name">Amira</span>
+            </div>
+            <div class="team-member" data-agent="hana" onclick="switchAgent('hana')">
+                <div class="team-avatar hana">H</div>
+                <span class="team-name">Hana</span>
+            </div>
+        </div>
+
+        <!-- Profile Summary -->
+        <div class="profile-summary" id="profileSummary">
+            <div class="profile-header">
+                <span class="profile-title">Your Profile</span>
+                <span class="profile-progress" id="profileProgress">0% Complete</span>
+            </div>
+            <div class="profile-tags" id="profileTags">
+                <span class="profile-tag">Start chatting to build your profile...</span>
+            </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="chat" id="chat"></div>
+
+        <!-- Input -->
+        <div class="input-area">
+            <div class="input-row">
+                <input type="text" class="text-input" id="textInput" placeholder="Message Dr. Nura...">
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // AGENTS CONFIGURATION
+        // ========================================
+        const agents = {
+            nura: {
+                name: "Dr. Nura",
+                role: "Lead Health Companion",
+                letter: "N",
+                color: "nura",
+                greeting: "Hey! I'm Dr. Nura, your personal health companion. I'm here to help you understand what's going on with your body. What's bringing you to me today?",
+                responses: {
+                    hair: "Hair changes can be so frustrating! This is actually **Dr. Layla's** specialty - she's amazing at connecting hair issues to what's happening hormonally. Want me to introduce you?",
+                    skin: "Skin stuff, got it! **Dr. Layla** is our skin and hair specialist. She can help figure out if this is hormonal. Should I connect you?",
+                    acne: "Hormonal acne is SO common and SO annoying. **Dr. Layla** specializes in exactly this - she looks at the hormone connection. Want to chat with her?",
+                    weight: "Weight changes can be really frustrating, especially when it feels out of your control. **Dr. Salma** is our nutrition and metabolism expert - she keeps it real but she's also super supportive. Want to meet her?",
+                    diet: "Nutrition is huge for hormonal health! **Dr. Salma** is our expert here - she'll give you real talk without judgment. Should I introduce you?",
+                    anxiety: "I hear you, and I'm really glad you're talking about this. Mental health and hormones are SO connected. **Dr. Maya** specializes in this - she's incredibly gentle. Want to chat with her?",
+                    mood: "Mood changes can be really tough to deal with. There's often a hormonal component. **Dr. Maya** is our mental wellness specialist - she's wonderful. Want me to connect you?",
+                    stress: "Stress affects everything, especially hormones. **Dr. Maya** can help with both the emotional side and understanding the hormone connection. Want to meet her?",
+                    pregnant: "Fertility and pregnancy questions? You'll love **Dr. Amira**! She's so knowledgeable and supportive. Want me to introduce you?",
+                    fertility: "Trying to conceive or thinking about it? **Dr. Amira** is our fertility specialist - she's helped so many women on this journey. Should I connect you?",
+                    baby: "Baby planning or pregnancy questions? **Dr. Amira** is amazing - she's our fertility and pregnancy expert. Want to chat with her?",
+                    menopause: "Sounds like you might be navigating some changes! **Dr. Hana** is our menopause specialist - she'll help you thrive through this transition. Want to meet her?",
+                    perimenopause: "Perimenopause can be a wild ride! **Dr. Hana** specializes in exactly this. She'll help you understand what's happening. Should I introduce you?",
+                    hot: "Hot flashes are no joke! **Dr. Hana** is our menopause expert - she has great strategies. Want to connect with her?",
+                    tired: "Fatigue is the worst! It can have so many causes - thyroid, iron, hormones, sleep issues. Tell me more - when did this start? How's your sleep?",
+                    sleep: "Sleep issues are so common and affect everything. Is it trouble falling asleep, staying asleep, or just not feeling rested?",
+                    period: "Period stuff - I'm here for it! What's going on? Irregular cycles, heavy bleeding, painful cramps, or something else?",
+                    default: "Thanks for sharing that with me! Tell me a bit more - when did you first notice this? And how much is it affecting your daily life?"
+                }
+            },
+            layla: {
+                name: "Dr. Layla",
+                role: "Hair & Skin Specialist",
+                letter: "L",
+                color: "layla",
+                greeting: "Hi there! I'm Dr. Layla. Nura mentioned you're dealing with some hair or skin changes. These can feel frustrating, but they're actually your body trying to tell you something. What's been going on?",
+                responses: {
+                    falling: "Hair falling out is scary, I know. Let me ask - is it all over or in specific spots? And when did you first notice it?",
+                    thinning: "Thinning hair often has a hormonal component. How long has this been happening? And have you noticed any other changes?",
+                    breaking: "Breakage can be related to nutrition, stress, or hormones. Are you also experiencing any skin changes or feeling more tired than usual?",
+                    acne: "Hormonal acne typically shows up along the jawline and chin. Is that where you're seeing it? And does it get worse at certain times of your cycle?",
+                    dry: "Dry skin and hair can signal thyroid or hormone changes. Are you also feeling more tired or noticing weight changes?",
+                    oily: "Excess oil can be hormone-related, especially androgens. Let's dig deeper - are you also seeing hair changes or irregular periods?",
+                    default: "That's really helpful to know. Your body is giving us clues. Let me ask - have you noticed any changes in your energy, weight, or cycle alongside this?"
+                }
+            },
+            salma: {
+                name: "Dr. Salma",
+                role: "Weight & Nutrition",
+                letter: "S",
+                color: "salma",
+                greeting: "Hey! I'm Dr. Salma. Nura told me you're dealing with some weight or nutrition stuff. I'm gonna be real with you - I'm not here to judge, but I'm also not gonna sugarcoat things. What's been happening?",
+                responses: {
+                    gain: "Weight gain when nothing's changed in your routine? That's a classic sign hormones might be involved. When did you first notice this?",
+                    lose: "Trouble losing weight despite your efforts? Super frustrating, I know. Sometimes it's not about trying harder - it's about understanding what's blocking you hormonally.",
+                    cravings: "Cravings are often your body's way of signaling something. Sugar cravings can be blood sugar related. What are you typically craving and when?",
+                    metabolism: "Feeling like your metabolism crashed? This is SO common, especially in your 30s and 40s. Let's figure out if hormones are playing a role.",
+                    hungry: "Always hungry or never hungry - both can be hormone signals. Tell me about your typical day of eating.",
+                    default: "Got it. Let me ask you this - how's your energy? Your sleep? Sometimes weight issues are connected to other things going on."
+                }
+            },
+            maya: {
+                name: "Dr. Maya",
+                role: "Mental Wellness",
+                letter: "M",
+                color: "maya",
+                greeting: "Hi there. I'm Dr. Maya. Nura mentioned you might be going through some tough stuff emotionally. First, I want you to know - whatever you're feeling is completely valid. This is a safe space. What's been on your mind?",
+                responses: {
+                    anxious: "Anxiety can feel so overwhelming. I want you to know this is incredibly common, and there's often a hormone connection. Can you tell me more about when you feel most anxious?",
+                    panic: "Panic attacks are terrifying. You're not alone in this. Have you noticed any patterns - certain times of day, or times in your cycle when they're worse?",
+                    sad: "I'm sorry you're feeling this way. Sadness that lingers can sometimes be connected to hormonal changes. How long have you been feeling like this?",
+                    overwhelmed: "Feeling overwhelmed is so valid, especially with everything on your plate. Let's talk about what's contributing to this feeling.",
+                    sleep: "Sleep and mental health are so connected. Poor sleep can worsen anxiety and mood, and vice versa. What does your sleep look like?",
+                    cry: "Crying easily or more than usual can absolutely be hormone-related. Many women experience this. When did you start noticing this change?",
+                    default: "Thank you for trusting me with this. Your feelings are valid. Can you tell me a bit more about what you've been experiencing?"
+                }
+            },
+            amira: {
+                name: "Dr. Amira",
+                role: "Fertility & Pregnancy",
+                letter: "A",
+                color: "amira",
+                greeting: "Hi lovely! I'm Dr. Amira. Nura told me you have some questions about fertility or pregnancy. I know this journey can bring up so many emotions - I'm here to support you through all of it. What's on your mind?",
+                responses: {
+                    trying: "Trying to conceive can be such an emotional rollercoaster. How long have you been trying? And are you tracking anything currently?",
+                    pregnant: "Congratulations! Or are you wondering if you might be? Either way, I'm here to help. What's going on?",
+                    cycle: "Understanding your cycle is so important for fertility. Tell me about your cycles - are they regular? How long typically?",
+                    ovulation: "Tracking ovulation is really helpful. There are several ways to do it. Are you currently using any methods?",
+                    miscarriage: "I'm so sorry for your loss. Pregnancy loss is more common than people talk about, but that doesn't make it less painful. How are you doing?",
+                    ivf: "The IVF journey is a big one. Whether you're considering it or going through it, I'm here to support you. What would you like to know?",
+                    default: "Thank you for sharing that with me. Fertility is such a personal journey. Let me ask a few questions to better understand your situation."
+                }
+            },
+            hana: {
+                name: "Dr. Hana",
+                role: "Menopause & Midlife",
+                letter: "H",
+                color: "hana",
+                greeting: "Hello! I'm Dr. Hana. Nura mentioned you might be navigating some changes that sound like perimenopause or menopause territory. First things first - this is NOT the beginning of the end. This is a powerful transition. What's been going on?",
+                responses: {
+                    hot: "Hot flashes are one of the most common symptoms, and they can be really disruptive. How often are you having them? Day, night, or both?",
+                    flash: "Hot flashes can range from mild warmth to full-on drenched-in-sweat moments. What are yours like? And when did they start?",
+                    night: "Night sweats are the worst - they really mess with your sleep. How often is this happening?",
+                    period: "Cycle changes are often the first sign of perimenopause. What changes are you noticing? More frequent, less frequent, heavier, lighter?",
+                    mood: "Mood changes in perimenopause are SO real and SO underrated. Many women feel like they're going crazy. You're not. What are you experiencing?",
+                    hrt: "HRT can be really helpful for many women. There's a lot of outdated fear around it. Would you like to understand more about the options?",
+                    default: "Those symptoms you're describing are really common in this transition. Let me ask - how old are you, and when did these changes start?"
+                }
+            }
+        };
+
+        // ========================================
+        // STATE
+        // ========================================
+        let state = {
+            currentAgent: 'nura',
+            xp: 0,
+            streak: 1,
+            userProfile: {
+                symptoms: [],
+                age: null,
+                concerns: []
+            },
+            agentConversations: {
+                nura: [],
+                layla: [],
+                salma: [],
+                maya: [],
+                amira: [],
+                hana: []
+            },
+            isProcessing: false
+        };
+
+        // ========================================
+        // START
+        // ========================================
+        function startDemo() {
+            document.getElementById('apiModal').classList.add('hidden');
+            startConversation();
+        }
+
+        function startConversation() {
+            showTyping('nura');
+            setTimeout(() => {
+                hideTyping();
+                addAgentMessage(agents.nura.greeting, 'nura');
+            }, 1500);
+        }
+
+        // ========================================
+        // UI FUNCTIONS
+        // ========================================
+        const chat = document.getElementById('chat');
+
+        function addAgentMessage(text, agent = state.currentAgent) {
+            const a = agents[agent];
+            const div = document.createElement('div');
+            div.className = 'agent-msg';
+            div.innerHTML = `
+                <div class="msg-avatar ${a.color}">${a.letter}</div>
+                <div class="msg-bubble ${a.color}">${formatText(text)}</div>
+            `;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+
+            state.agentConversations[agent].push({ role: 'assistant', content: text });
+        }
+
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'user-msg';
+            div.textContent = text;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+
+            state.agentConversations[state.currentAgent].push({ role: 'user', content: text });
+        }
+
+        function formatText(text) {
+            return text
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function showTyping(agent = state.currentAgent) {
+            const a = agents[agent];
+            const div = document.createElement('div');
+            div.className = 'typing-container';
+            div.id = 'typing';
+            div.innerHTML = `
+                <div class="msg-avatar ${a.color}">${a.letter}</div>
+                <div class="typing-bubble">
+                    <div class="typing-dot" style="background: var(--${a.color})"></div>
+                    <div class="typing-dot" style="background: var(--${a.color})"></div>
+                    <div class="typing-dot" style="background: var(--${a.color})"></div>
+                </div>
+            `;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function hideTyping() {
+            const t = document.getElementById('typing');
+            if (t) t.remove();
+        }
+
+        function showHandoff(toAgent) {
+            const a = agents[toAgent];
+            const div = document.createElement('div');
+            div.className = 'handoff-card';
+            div.innerHTML = `
+                <div class="handoff-title">Connecting you with a specialist</div>
+                <div class="handoff-avatar" style="background: linear-gradient(135deg, var(--${a.color}) 0%, var(--${a.color}-dark) 100%)">${a.letter}</div>
+                <div class="handoff-name">${a.name}</div>
+                <div class="handoff-specialty">${a.role}</div>
+            `;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function updateHeader(agent) {
+            const a = agents[agent];
+            document.getElementById('headerAvatar').className = `agent-avatar ${a.color}`;
+            document.getElementById('headerAvatar').innerHTML = `<span>${a.letter}</span><div class="online-dot"></div>`;
+            document.getElementById('headerName').textContent = a.name;
+            document.getElementById('headerRole').textContent = a.role;
+            document.getElementById('textInput').placeholder = `Message ${a.name}...`;
+
+            document.querySelectorAll('.team-member').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.agent === agent) el.classList.add('active');
+            });
+        }
+
+        function updateProfile() {
+            const tags = document.getElementById('profileTags');
+            const progress = document.getElementById('profileProgress');
+
+            let html = '';
+            let completed = 0;
+
+            if (state.userProfile.symptoms.length > 0) {
+                state.userProfile.symptoms.slice(0, 4).forEach(s => {
+                    html += `<span class="profile-tag symptom">${s}</span>`;
+                });
+                completed++;
+            }
+
+            if (state.userProfile.age) {
+                html += `<span class="profile-tag age">${state.userProfile.age}</span>`;
+                completed++;
+            }
+
+            if (!html) {
+                html = '<span class="profile-tag">Start chatting to build your profile...</span>';
+            }
+
+            tags.innerHTML = html;
+            progress.textContent = `${Math.round((completed / 5) * 100)}% Complete`;
+        }
+
+        function addXP(amount) {
+            state.xp += amount;
+            document.getElementById('xp').textContent = state.xp;
+        }
+
+        // ========================================
+        // RESPONSE LOGIC
+        // ========================================
+        function getResponse(message, agent) {
+            const lower = message.toLowerCase();
+            const responses = agents[agent].responses;
+
+            for (const [keyword, response] of Object.entries(responses)) {
+                if (keyword !== 'default' && lower.includes(keyword)) {
+                    return response;
+                }
+            }
+
+            return responses.default;
+        }
+
+        function detectHandoff(response) {
+            const lower = response.toLowerCase();
+            if (lower.includes('dr. layla')) return 'layla';
+            if (lower.includes('dr. salma')) return 'salma';
+            if (lower.includes('dr. maya')) return 'maya';
+            if (lower.includes('dr. amira')) return 'amira';
+            if (lower.includes('dr. hana')) return 'hana';
+            return null;
+        }
+
+        // ========================================
+        // AGENT SWITCHING
+        // ========================================
+        async function switchAgent(agentId) {
+            if (agentId === state.currentAgent || state.isProcessing) return;
+
+            state.isProcessing = true;
+            const prevAgent = state.currentAgent;
+            state.currentAgent = agentId;
+            updateHeader(agentId);
+
+            chat.innerHTML = '';
+
+            if (prevAgent !== agentId && state.agentConversations[prevAgent].length > 0) {
+                showHandoff(agentId);
+                await delay(1500);
+            }
+
+            if (state.agentConversations[agentId].length === 0) {
+                showTyping(agentId);
+                await delay(1000);
+                hideTyping();
+                addAgentMessage(agents[agentId].greeting, agentId);
+            } else {
+                state.agentConversations[agentId].forEach(msg => {
+                    if (msg.role === 'assistant') {
+                        const a = agents[agentId];
+                        const div = document.createElement('div');
+                        div.className = 'agent-msg';
+                        div.innerHTML = `
+                            <div class="msg-avatar ${a.color}">${a.letter}</div>
+                            <div class="msg-bubble ${a.color}">${formatText(msg.content)}</div>
+                        `;
+                        chat.appendChild(div);
+                    } else {
+                        const div = document.createElement('div');
+                        div.className = 'user-msg';
+                        div.textContent = msg.content;
+                        chat.appendChild(div);
+                    }
+                });
+                chat.scrollTop = chat.scrollHeight;
+            }
+
+            addXP(5);
+            state.isProcessing = false;
+        }
+
+        // ========================================
+        // SEND MESSAGE
+        // ========================================
+        async function sendMessage() {
+            if (state.isProcessing) return;
+
+            const input = document.getElementById('textInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            state.isProcessing = true;
+            document.getElementById('sendBtn').disabled = true;
+
+            input.value = '';
+            addUserMessage(text);
+            extractProfileData(text);
+
+            showTyping();
+
+            // Simulate thinking time
+            await delay(1000 + Math.random() * 1000);
+
+            const response = getResponse(text, state.currentAgent);
+
+            hideTyping();
+            addAgentMessage(response);
+            addXP(10);
+
+            // Check for handoff
+            const handoff = detectHandoff(response);
+            if (handoff) {
+                await delay(2000);
+                await switchAgent(handoff);
+            }
+
+            state.isProcessing = false;
+            document.getElementById('sendBtn').disabled = false;
+        }
+
+        function extractProfileData(text) {
+            const lower = text.toLowerCase();
+
+            const symptoms = ['tired', 'fatigue', 'headache', 'anxiety', 'mood', 'weight', 'hair', 'acne', 'sleep', 'hot flash', 'cramps', 'bloating'];
+            symptoms.forEach(s => {
+                if (lower.includes(s) && !state.userProfile.symptoms.includes(s)) {
+                    state.userProfile.symptoms.push(s);
+                }
+            });
+
+            const ageMatch = text.match(/(\d{2})\s*(years|year|yo|y\/o)?/i);
+            if (ageMatch && parseInt(ageMatch[1]) > 12 && parseInt(ageMatch[1]) < 80) {
+                state.userProfile.age = ageMatch[1] + ' years old';
+            }
+
+            updateProfile();
+        }
+
+        // ========================================
+        // UTILITIES
+        // ========================================
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        document.getElementById('textInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !state.isProcessing) sendMessage();
+        });
+    </script>
+</body>
+</html>
